@@ -10,5 +10,12 @@ serve({
       return response;
     },
   }),
-  "/:filename+": serveStatic(".", { baseUrl: import.meta.url }),
+  "/:filename+": serveStatic(".", {
+    baseUrl: import.meta.url,
+    intervene: (response) => {
+      console.info("res url:", response.url);
+      console.info("res content-type:", response.headers.get("content-type"));
+      return response;
+    },
+  }),
 });
