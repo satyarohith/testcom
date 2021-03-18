@@ -6,7 +6,7 @@ serve({
   "/": serveStatic("index.html", {
     baseUrl: import.meta.url,
     intervene: (response) => {
-      response.headers.set("Content-Type", "text/html; charset=UTF-8");
+      response.headers.set("content-type", "text/html; charset=utf-8");
       return response;
     },
   }),
