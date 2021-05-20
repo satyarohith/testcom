@@ -1,7 +1,7 @@
 import {
   serve,
   serveStatic,
-} from "https://raw.githubusercontent.com/satyarohith/sift/main/mod.ts";
+} from "https://raw.githubusercontent.com/satyarohith/sift/st/mod.ts";
 
 serve({
   "/": serveStatic("index.html", {
