@@ -1,7 +1,8 @@
 import { assertEquals } from "https://deno.land/std@0.85.0/testing/asserts.ts";
 import { Status } from "https://deno.land/std@0.85.0/http/http_status.ts";
-import { startServer, stopServer } from "./test_helper.ts";
-import { json, serve, serveStatic, validateRequest } from "./mod.ts";
+// import { startServer, stopServer } from "./test_helper.ts";
+// import { json, serve, serveStatic, validateRequest } from "./mod.ts";
+import { json, validateRequest } from "./mod.ts";
 
 // Deno.test("serve() invokes appropriate route handler", async () => {
 //   startServer(8910);

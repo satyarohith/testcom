@@ -62,9 +62,10 @@ function newResponse(
   headers: Record<string, string>,
 ): Response {
   const oldHeaders = Object.fromEntries(res.headers.entries());
+  delete oldHeaders["content-security-policy"];
   return new Response(res.body, {
     headers: {
-      "content-length": oldHeaders["content-length"],
+      ...oldHeaders,
       ...headers,
     },
     status: res.status,
@@ -77,11 +78,10 @@ async function handleRequest(
   routes: Routes,
 ): Promise<Response> {
   const { search, pathname } = new URL(request.url);
-  let response;
 
   try {
     const startTime = Date.now();
-    await globalCache.match(request);
+    let response = await globalCache.match(request);
     if (response === undefined) {
       for (const route of Object.keys(routes)) {
         if (pathToRegexp(route).test(pathname)) {
@@ -120,11 +120,12 @@ async function handleRequest(
           : ""
       }${Date.now() - startTime}ms ${response.status}`,
     );
+
+    return response;
   } catch (error) {
     console.error("Error serving request:", error);
+    return json({ error: error.message }, { status: 500 });
   }
-
-  return response;
 }
 
 function defaultNotFoundPage() {
@@ -177,14 +178,11 @@ export function serveStatic(
         : relativePath + "/" + params.filename;
     }
 
-    console.log({ baseUrl, intervene, cache });
     const fileUrl = new URL(filePath, baseUrl).toString();
     let response;
     if (cache === true) {
       response = await globalCache.match(request);
     }
-
-    console.log({ fileUrl });
 
     if (response === undefined) {
       response = await fetch(new Request(fileUrl, request));
@@ -192,14 +190,11 @@ export function serveStatic(
         return routes[404](request, {});
       }
 
-      console.log({ text: await response.clone().text() });
-
       const cType = contentType(String(lookup(filePath)));
       if (cType) {
         response = newResponse(response, { "content-type": cType });
       }
 
-      console.log({ cType });
       if (typeof intervene === "function") {
         response = await intervene(request, response);
       }
@@ -220,7 +215,7 @@ export function serveStatic(
       });
     }
 
-    console.log({ text2: await response.clone().text() });
+    console.log({ headers: response.clone().headers.entries() });
 
     return response;
   };
