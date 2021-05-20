@@ -1,4 +1,4 @@
-import { serve, serveStatic } from "./sift/mod.ts";
+import { serve, serveStatic } from "https://deno.land/x/sift@0.3.1/mod.ts";
 
 serve({
   "/": serveStatic("index.html", {
